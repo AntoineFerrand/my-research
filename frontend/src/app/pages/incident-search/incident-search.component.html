@@ -1,0 +1,178 @@
+<div class="incident-search-container">
+
+  <!-- Formulaire de recherche -->
+  <div class="search-form">
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="title">Titre</label>
+        <input
+          type="text"
+          id="title"
+          [value]="filters().title"
+          (input)="updateFilter('title', $any($event.target).value)"
+          placeholder="Filtrer par titre..."
+          (keyup.enter)="searchIncidents()"
+        />
+      </div>
+
+      <div class="form-field">
+        <label for="description">Description</label>
+        <input
+          type="text"
+          id="description"
+          [value]="filters().description"
+          (input)="updateFilter('description', $any($event.target).value)"
+          placeholder="Filtrer par description..."
+          (keyup.enter)="searchIncidents()"
+        />
+      </div>
+
+      <div class="form-field">
+        <label for="severity">Sévérité</label>
+        <select
+          id="severity"
+          [value]="filters().severity"
+          (change)="updateFilter('severity', $any($event.target).value)">
+          <option value="">Toutes</option>
+          <option value="LOW">LOW</option>
+          <option value="MEDIUM">MEDIUM</option>
+          <option value="HIGH">HIGH</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label for="owner">Propriétaire</label>
+        <input
+          type="text"
+          id="owner"
+          [value]="filters().owner"
+          (input)="updateFilter('owner', $any($event.target).value)"
+          placeholder="Nom, prénom ou email..."
+          (keyup.enter)="searchIncidents()"
+        />
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button
+        class="btn btn-primary"
+        (click)="searchIncidents()"
+        [disabled]="isLoading()"
+      >
+        {{ isLoading() ? 'Recherche en cours...' : 'Rechercher' }}
+      </button>
+      <button
+        class="btn btn-secondary"
+        (click)="resetFilters()"
+        [disabled]="isLoading()"
+      >
+        Réinitialiser
+      </button>
+    </div>
+  </div>
+
+  <!-- Temps de requête -->
+  @if (lastQueryTime() !== null) {
+    <div class="query-info">
+      <span class="query-time">
+        ⏱️ Temps de la dernière requête: <strong>{{ lastQueryTime()!.toFixed(3) }} secondes</strong>
+      </span>
+      @if (!errorMessage()) {
+        <span class="result-count">
+          📊 {{ totalElements() }} résultat(s) trouvé(s)
+        </span>
+      }
+    </div>
+  }
+
+  <!-- Message d'erreur -->
+  @if (errorMessage()) {
+    <div class="error-message">
+      ⚠️ {{ errorMessage() }}
+    </div>
+  }
+
+  <!-- Tableau des résultats -->
+  @if (incidents().length > 0) {
+    <div class="results-container">
+      <div class="table-wrapper">
+        <table class="incidents-table">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Titre</th>
+            <th>Description</th>
+            <th>Sévérité</th>
+            <th>Date de création</th>
+            <th>Nom propriétaire</th>
+            <th>Prénom propriétaire</th>
+            <th>Email propriétaire</th>
+          </tr>
+          </thead>
+          <tbody>
+            @for (incident of incidents(); track incident.id) {
+              <tr [class.severity-high]="incident.severity === 'HIGH'"
+                  [class.severity-medium]="incident.severity === 'MEDIUM'"
+                  [class.severity-low]="incident.severity === 'LOW'">
+                <td>{{ incident.id }}</td>
+                <td class="title-cell">{{ incident.title }}</td>
+                <td class="description-cell">{{ incident.description }}</td>
+                <td>
+                  <span class="severity-badge" [class]="'severity-' + incident.severity.toLowerCase()">
+                    {{ incident.severity }}
+                  </span>
+                </td>
+                <td>{{ formatDate(incident.createdAt) }}</td>
+                <td>{{ incident.ownerLastName }}</td>
+                <td>{{ incident.ownerFirstName }}</td>
+                <td>{{ incident.ownerEmail }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-controls">
+        <div class="pagination-info">
+          Page {{ currentPage() + 1 }} sur {{ totalPages() }} ({{ totalElements() }} résultats)
+        </div>
+        <div class="pagination-buttons">
+          <button
+            class="btn btn-pagination"
+            (click)="previousPage()"
+            [disabled]="!hasPrevious() || isLoading()"
+          >
+            ← Précédent
+          </button>
+          <select
+            class="page-size-selector"
+            [value]="pageSize()"
+            (change)="changePageSize(+$any($event.target).value)"
+            [disabled]="isLoading()"
+          >
+            <option [value]="5">5 par page</option>
+            <option [value]="10">10 par page</option>
+            <option [value]="25">25 par page</option>
+            <option [value]="50">50 par page</option>
+            <option [value]="100">100 par page</option>
+          </select>
+          <button
+            class="btn btn-pagination"
+            (click)="nextPage()"
+            [disabled]="!hasNext() || isLoading()"
+          >
+            Suivant →
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Message si aucun résultat -->
+  @if (!isLoading() && incidents().length === 0 && lastQueryTime() !== null && !errorMessage()) {
+    <div class="no-results">
+      Aucun incident trouvé avec ces critères.
+    </div>
+  }
+</div>
