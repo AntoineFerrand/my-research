@@ -1,39 +1,57 @@
 <div class="incident-search-container">
 
+  <!-- Sélecteur de langue -->
+  <div class="language-selector">
+    <label>{{ 'LANGUAGE.SELECT' | translate }}:</label>
+    <button
+      class="btn btn-lang"
+      [class.active]="currentLang() === 'fr'"
+      (click)="switchLanguage('fr')">
+      🇫🇷 FR
+    </button>
+    <button
+      class="btn btn-lang"
+      [class.active]="currentLang() === 'en'"
+      (click)="switchLanguage('en')">
+      🇬🇧 EN
+    </button>
+  </div>
+
+  <!-- Titre -->
+  <h1>{{ 'INCIDENT.TITLE' | translate }}</h1>
+
   <!-- Formulaire de recherche -->
   <div class="search-form">
     <div class="form-grid">
       <div class="form-field">
-        <label for="title">Titre</label>
+        <label for="title">{{ 'INCIDENT.FILTERS.TITLE' | translate }}</label>
         <input
           type="text"
           id="title"
           [value]="filters().title"
           (input)="updateFilter('title', $any($event.target).value)"
-          placeholder="Filtrer par titre..."
-          (keyup.enter)="searchIncidents()"
-        />
+          [placeholder]="'INCIDENT.FILTERS.TITLE_PLACEHOLDER' | translate"
+          (keyup.enter)="searchIncidents()"/>
       </div>
 
       <div class="form-field">
-        <label for="description">Description</label>
+        <label for="description">{{ 'INCIDENT.FILTERS.DESCRIPTION' | translate }}</label>
         <input
           type="text"
           id="description"
           [value]="filters().description"
           (input)="updateFilter('description', $any($event.target).value)"
-          placeholder="Filtrer par description..."
-          (keyup.enter)="searchIncidents()"
-        />
+          [placeholder]="'INCIDENT.FILTERS.DESCRIPTION_PLACEHOLDER' | translate"
+          (keyup.enter)="searchIncidents()"/>
       </div>
 
       <div class="form-field">
-        <label for="severity">Sévérité</label>
+        <label for="severity">{{ 'INCIDENT.FILTERS.SEVERITY' | translate }}</label>
         <select
           id="severity"
           [value]="filters().severity"
           (change)="updateFilter('severity', $any($event.target).value)">
-          <option value="">Toutes</option>
+          <option value="">{{ 'INCIDENT.FILTERS.SEVERITY_ALL' | translate }}</option>
           <option value="LOW">LOW</option>
           <option value="MEDIUM">MEDIUM</option>
           <option value="HIGH">HIGH</option>
@@ -41,15 +59,14 @@
       </div>
 
       <div class="form-field">
-        <label for="owner">Propriétaire</label>
+        <label for="owner">{{ 'INCIDENT.FILTERS.OWNER' | translate }}</label>
         <input
           type="text"
           id="owner"
           [value]="filters().owner"
           (input)="updateFilter('owner', $any($event.target).value)"
-          placeholder="Nom, prénom ou email..."
-          (keyup.enter)="searchIncidents()"
-        />
+          [placeholder]="'INCIDENT.FILTERS.OWNER_PLACEHOLDER' | translate"
+          (keyup.enter)="searchIncidents()"/>
       </div>
     </div>
 
@@ -57,16 +74,14 @@
       <button
         class="btn btn-primary"
         (click)="searchIncidents()"
-        [disabled]="isLoading()"
-      >
-        {{ isLoading() ? 'Recherche en cours...' : 'Rechercher' }}
+        [disabled]="isLoading()">
+        {{ (isLoading() ? 'INCIDENT.SEARCHING' : 'INCIDENT.SEARCH') | translate }}
       </button>
       <button
         class="btn btn-secondary"
         (click)="resetFilters()"
-        [disabled]="isLoading()"
-      >
-        Réinitialiser
+        [disabled]="isLoading()">
+        {{ 'INCIDENT.RESET' | translate }}
       </button>
     </div>
   </div>
@@ -75,11 +90,11 @@
   @if (lastQueryTime() !== null) {
     <div class="query-info">
       <span class="query-time">
-        ⏱️ Temps de la dernière requête: <strong>{{ lastQueryTime()!.toFixed(3) }} secondes</strong>
+        {{ 'INCIDENT.EXECUTION_TIME' | translate: {time: lastQueryTime()!.toFixed(3)} }}
       </span>
       @if (!errorMessage()) {
         <span class="result-count">
-          📊 {{ totalElements() }} résultat(s) trouvé(s)
+          {{ 'INCIDENT.RESULT_COUNT' | translate: {count: totalElements()} }}
         </span>
       }
     </div>
@@ -88,7 +103,7 @@
   <!-- Message d'erreur -->
   @if (errorMessage()) {
     <div class="error-message">
-      ⚠️ {{ errorMessage() }}
+      {{ 'INCIDENT.ERROR' | translate: {message: errorMessage()} }}
     </div>
   }
 
@@ -99,14 +114,14 @@
         <table class="incidents-table">
           <thead>
           <tr>
-            <th>ID</th>
-            <th>Titre</th>
-            <th>Description</th>
-            <th>Sévérité</th>
-            <th>Date de création</th>
-            <th>Nom propriétaire</th>
-            <th>Prénom propriétaire</th>
-            <th>Email propriétaire</th>
+            <th>{{ 'INCIDENT.TABLE.ID' | translate }}</th>
+            <th>{{ 'INCIDENT.TABLE.TITLE' | translate }}</th>
+            <th>{{ 'INCIDENT.TABLE.DESCRIPTION' | translate }}</th>
+            <th>{{ 'INCIDENT.TABLE.SEVERITY' | translate }}</th>
+            <th>{{ 'INCIDENT.TABLE.CREATED_AT' | translate }}</th>
+            <th>{{ 'INCIDENT.TABLE.OWNER_LASTNAME' | translate }}</th>
+            <th>{{ 'INCIDENT.TABLE.OWNER_FIRSTNAME' | translate }}</th>
+            <th>{{ 'INCIDENT.TABLE.OWNER_EMAIL' | translate }}</th>
           </tr>
           </thead>
           <tbody>
@@ -135,22 +150,20 @@
       <!-- Pagination -->
       <div class="pagination-controls">
         <div class="pagination-info">
-          Page {{ currentPage() + 1 }} sur {{ totalPages() }} ({{ totalElements() }} résultats)
+          {{ 'INCIDENT.PAGINATION.PAGE_INFO' | translate: {current: currentPage() + 1, total: totalPages()} }} ({{ totalElements() }} {{ 'INCIDENT.RESULT_COUNT' | translate: {count: ''} }})
         </div>
         <div class="pagination-buttons">
           <button
             class="btn btn-pagination"
             (click)="previousPage()"
-            [disabled]="!hasPrevious() || isLoading()"
-          >
-            ← Précédent
+            [disabled]="!hasPrevious() || isLoading()">
+            ← {{ 'INCIDENT.PAGINATION.PREVIOUS' | translate }}
           </button>
           <select
             class="page-size-selector"
             [value]="pageSize()"
             (change)="changePageSize(+$any($event.target).value)"
-            [disabled]="isLoading()"
-          >
+            [disabled]="isLoading()">
             <option [value]="5">5 par page</option>
             <option [value]="10">10 par page</option>
             <option [value]="25">25 par page</option>
@@ -160,9 +173,8 @@
           <button
             class="btn btn-pagination"
             (click)="nextPage()"
-            [disabled]="!hasNext() || isLoading()"
-          >
-            Suivant →
+            [disabled]="!hasNext() || isLoading()">
+            {{ 'INCIDENT.PAGINATION.NEXT' | translate }} →
           </button>
         </div>
       </div>
@@ -172,7 +184,7 @@
   <!-- Message si aucun résultat -->
   @if (!isLoading() && incidents().length === 0 && lastQueryTime() !== null && !errorMessage()) {
     <div class="no-results">
-      Aucun incident trouvé avec ces critères.
+      {{ 'INCIDENT.NO_RESULTS' | translate }}
     </div>
   }
 </div>

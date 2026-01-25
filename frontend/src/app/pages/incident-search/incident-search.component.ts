@@ -1,6 +1,7 @@
-import { Component, signal, computed, inject } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { IncidentDTO, IncidentSearchFilters, PageResponse } from '../../shared/models/incident.model';
 import { IncidentService } from '../../shared/services/incident.service';
 
@@ -12,13 +13,17 @@ import { IncidentService } from '../../shared/services/incident.service';
 @Component({
   selector: 'app-incident-search',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './incident-search.component.html',
   styleUrls: ['./incident-search.component.scss']
 })
 export class IncidentSearchComponent {
   // Injection de service avec inject()
   private readonly incidentService = inject(IncidentService);
+  private readonly translateService = inject(TranslateService);
+
+  // Langue courante - charger depuis localStorage
+  readonly currentLang = signal<string>(this.getStoredLanguage());
 
   // Filtres de recherche avec signals
   readonly filters = signal<IncidentSearchFilters>({
@@ -145,10 +150,33 @@ export class IncidentSearchComponent {
   }
 
   /**
-   * Formate la date au format français.
+   * Récupère la langue stockée ou la langue par défaut.
+   */
+  private getStoredLanguage(): string {
+    const stored = localStorage.getItem('userLanguage');
+    if (stored) {
+      this.translateService.use(stored);
+      return stored;
+    }
+    return this.translateService.getCurrentLang() || 'en';
+  }
+
+  /**
+   * Formate la date selon la langue courante.
    */
   formatDate(dateString: string): string {
     const date = new Date(dateString);
-    return date.toLocaleString('fr-FR');
+    const locale = this.currentLang() === 'fr' ? 'fr-FR' : 'en-US';
+    return date.toLocaleString(locale);
+  }
+
+  /**
+   * Change la langue de l'application et la sauvegarde.
+   */
+  switchLanguage(lang: string): void {
+    console.log(lang)
+    this.translateService.use(lang);
+    this.currentLang.set(lang);
+    localStorage.setItem('userLanguage', lang);
   }
 }

@@ -1,0 +1,40 @@
+{
+  "INCIDENT": {
+    "TITLE": "Recherche d'incidents",
+    "SEARCH": "Rechercher",
+    "SEARCHING": "Recherche en cours...",
+    "RESET": "Réinitialiser",
+    "FILTERS": {
+      "TITLE": "Titre",
+      "TITLE_PLACEHOLDER": "Filtrer par titre...",
+      "DESCRIPTION": "Description",
+      "DESCRIPTION_PLACEHOLDER": "Filtrer par description...",
+      "SEVERITY": "Sévérité",
+      "SEVERITY_ALL": "Toutes",
+      "OWNER": "Propriétaire",
+      "OWNER_PLACEHOLDER": "Nom, prénom ou email..."
+    },
+    "TABLE": {
+      "ID": "ID",
+      "TITLE": "Titre",
+      "DESCRIPTION": "Description",
+      "SEVERITY": "Sévérité",
+      "CREATED_AT": "Date de création",
+      "OWNER_LASTNAME": "Nom",
+      "OWNER_FIRSTNAME": "Prénom",
+      "OWNER_EMAIL": "Email"
+    },
+    "EXECUTION_TIME": "⏱️ Temps de la dernière requête: {{time}} secondes",
+    "RESULT_COUNT": "📊 {{count}} résultat(s) trouvé(s)",
+    "NO_RESULTS": "Aucun résultat trouvé",
+    "ERROR": "⚠️ {{message}}",
+    "PAGINATION": {
+      "PREVIOUS": "Précédent",
+      "NEXT": "Suivant",
+      "PAGE_INFO": "Page {{current}} sur {{total}}"
+    }
+  },
+  "LANGUAGE": {
+    "SELECT": "Langue"
+  }
+}

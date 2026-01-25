@@ -1,0 +1,40 @@
+{
+  "INCIDENT": {
+    "TITLE": "Incident Search",
+    "SEARCH": "Search",
+    "SEARCHING": "Searching...",
+    "RESET": "Reset",
+    "FILTERS": {
+      "TITLE": "Title",
+      "TITLE_PLACEHOLDER": "Filter by title...",
+      "DESCRIPTION": "Description",
+      "DESCRIPTION_PLACEHOLDER": "Filter by description...",
+      "SEVERITY": "Severity",
+      "SEVERITY_ALL": "All",
+      "OWNER": "Owner",
+      "OWNER_PLACEHOLDER": "Last name, first name or email..."
+    },
+    "TABLE": {
+      "ID": "ID",
+      "TITLE": "Title",
+      "DESCRIPTION": "Description",
+      "SEVERITY": "Severity",
+      "CREATED_AT": "Created at",
+      "OWNER_LASTNAME": "Last name",
+      "OWNER_FIRSTNAME": "First name",
+      "OWNER_EMAIL": "Email"
+    },
+    "EXECUTION_TIME": "⏱️ Last query time: {{time}} seconds",
+    "RESULT_COUNT": "📊 {{count}} result(s) found",
+    "NO_RESULTS": "No results found",
+    "ERROR": "⚠️ {{message}}",
+    "PAGINATION": {
+      "PREVIOUS": "Previous",
+      "NEXT": "Next",
+      "PAGE_INFO": "Page {{current}} of {{total}}"
+    }
+  },
+  "LANGUAGE": {
+    "SELECT": "Language"
+  }
+}
