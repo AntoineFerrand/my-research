@@ -9,8 +9,10 @@ my-research/
 ├── backend/              # Spring Boot REST API
 ├── frontend/             # Angular 21 Application
 ├── scripts-sql/          # Database initialization scripts
-│   ├── 01-ddl.sql       # Table schema
-│   └── 02-data.sql      # Test data (100,000 incidents)
+│   ├── 01-ddl.sql       # Table schema + indexes
+│   ├── 02-data.sql      # Test data (100,000 incidents)
+│   └── 03-performance-test.sql  # Performance benchmarking queries
+├── test-perf.sh          # Automated performance test script
 ├── compose.yaml          # Docker Compose configuration
 └── README.md            # This file
 ```
@@ -154,9 +156,27 @@ npm run lint
 | owner_id     | INTEGER   | Foreign key to `person(id)`       |
 | created_at   | TIMESTAMP | Creation date                     |
 
-**Existing indexes**:
-- `idx_person_id` on `person(id)`
-- `idx_incident_id` on `incident(id)`
+## ⚡ Performance Optimizations
+
+This section documents each optimization applied to improve search performance on 100,000 incidents.
+
+### Optimization #1: PostgreSQL Trigram Indexes (pg_trgm + GIN)
+
+**Type**: Database indexing
+
+**Objective**: Optimize partial text searches (`LIKE '%keyword%'`) on textual columns
+
+**Implementation**:
+- Enabled PostgreSQL extension `pg_trgm` for trigram similarity
+- Created GIN indexes on all text search columns:
+  - `incident.title`, `incident.description` → trigram indexes
+  - `incident.severity` → B-tree index (exact match)
+  - `person.last_name`, `person.first_name`, `person.email` → trigram indexes
+- Removed redundant indexes (`idx_person_id`, `idx_incident_id`) since PostgreSQL automatically indexes primary keys
+
+You can check the result of performance tests realised in PERFORMANCE_RESULT.md
+with the new script 03-performance-test.sql. This script is mount in the container if you want to run by connecting
+inside the postgres image.
 
 ## 🔌 Backend API
 

@@ -16,3 +16,4 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./scripts-sql/01-ddl.sql:/docker-entrypoint-initdb.d/01-ddl.sql
       - ./scripts-sql/02-data.sql:/docker-entrypoint-initdb.d/02-data.sql
+      - ./scripts-sql:/scripts-sql:ro  # Mount scripts for manual testing
