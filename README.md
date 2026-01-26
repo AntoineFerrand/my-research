@@ -162,8 +162,6 @@ This section documents each optimization applied to improve search performance o
 
 ### Optimization #1: PostgreSQL Trigram Indexes (pg_trgm + GIN)
 
-**Type**: Database indexing
-
 **Objective**: Optimize partial text searches (`LIKE '%keyword%'`) on textual columns
 
 **Implementation**:
@@ -177,6 +175,23 @@ This section documents each optimization applied to improve search performance o
 You can check the result of performance tests realised in PERFORMANCE_RESULT.md
 with the new script 03-performance-test.sql. This script is mount in the container if you want to run by connecting
 inside the postgres image.
+
+### Optimization #2: Add eager loading for GET incidents endpoint
+
+**Problem**:
+Relation Incident → Person (owner). By default with Hibernate, when we retrieve 100 incidents:
+- 1 request to load all 100 incidents
+- 100 additional requests to load each owner individually when you access them
+  This is N+1 problem: very inefficient!
+
+**Objective**:
+With eager loading, we should load everything at once with a JOIN:
+A single query to retrieve all 100 incidents AND their owners
+
+**Implementation**
+@EntityGraph(attributePaths = {"owner"})
+List<Incident> findAll(Specification<Incident> spec);
+
 
 ## 🔌 Backend API
 
