@@ -2,6 +2,20 @@
 
   <header class="app-header">
     <h1 class="app-title">{{ 'LAYOUT.APP_TITLE' | translate }}</h1>
+    <div class="language-selector">
+      <button
+        class="btn btn-lang"
+        [class.active]="currentLang() === 'fr'"
+        (click)="switchLanguage('fr')">
+        🇫🇷 FR
+      </button>
+      <button
+        class="btn btn-lang"
+        [class.active]="currentLang() === 'en'"
+        (click)="switchLanguage('en')">
+        🇬🇧 EN
+      </button>
+    </div>
   </header>
 
   <div class="layout-body">

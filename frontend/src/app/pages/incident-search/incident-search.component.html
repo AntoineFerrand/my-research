@@ -1,22 +1,5 @@
 <div class="incident-search-container">
 
-  <div class="language-selector">
-    <label>{{ 'LANGUAGE.SELECT' | translate }}:</label>
-    <button
-      class="btn btn-lang"
-      [class.active]="currentLang() === 'fr'"
-      (click)="switchLanguage('fr')">
-      🇫🇷 FR
-    </button>
-    <button
-      class="btn btn-lang"
-      [class.active]="currentLang() === 'en'"
-      (click)="switchLanguage('en')">
-      🇬🇧 EN
-    </button>
-  </div>
-
-  <h1>{{ 'INCIDENT.TITLE' | translate }}</h1>
 
   <div class="search-form">
     <div class="form-grid">
@@ -143,7 +126,7 @@
 
       <div class="pagination-controls">
         <div class="pagination-info">
-          {{ 'INCIDENT.PAGINATION.PAGE_INFO' | translate: {current: currentPage() + 1, total: totalPages()} }} ({{ totalElements() }} {{ 'INCIDENT.RESULT_COUNT' | translate: {count: ''} }})
+          {{ 'INCIDENT.PAGINATION.PAGE_INFO' | translate: {current: currentPage() + 1, total: totalPages()} }}
         </div>
         <div class="pagination-buttons">
           <button

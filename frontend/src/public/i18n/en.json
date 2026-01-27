@@ -25,17 +25,14 @@
       "OWNER_EMAIL": "Email"
     },
     "EXECUTION_TIME": "⏱️ Last query time: {{time}} seconds",
-    "RESULT_COUNT": "📊 {{count}} result(s) found",
-    "NO_RESULTS": "No results found",
+    "RESULT_COUNT": "📊 {{count}} incidents found",
+    "NO_RESULTS": "No incidents found",
     "ERROR": "⚠️ {{message}}",
     "PAGINATION": {
       "PREVIOUS": "Previous",
       "NEXT": "Next",
       "PAGE_INFO": "Page {{current}} of {{total}}"
     }
-  },
-  "LANGUAGE": {
-    "SELECT": "Language"
   },
   "LAYOUT": {
     "APP_TITLE": "Incident Search",

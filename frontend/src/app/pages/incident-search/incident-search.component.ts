@@ -21,9 +21,6 @@ export class IncidentSearchComponent {
   private readonly incidentService = inject(IncidentService);
   private readonly translateService = inject(TranslateService);
 
-  // Current language - loaded from localStorage
-  readonly currentLang = signal<string>(this.getStoredLanguage());
-
   readonly filters = signal<IncidentSearchFilters>({
     title: '',
     description: '',
@@ -130,33 +127,12 @@ export class IncidentSearchComponent {
   }
 
   /**
-   * Retrieves stored language or default language.
-   */
-  private getStoredLanguage(): string {
-    const stored = localStorage.getItem('userLanguage');
-    if (stored) {
-      this.translateService.use(stored);
-      return stored;
-    }
-    return this.translateService.getCurrentLang() || 'en';
-  }
-
-  /**
    * Formats date according to current language.
    */
   formatDate(dateString: string): string {
     const date = new Date(dateString);
-    const locale = this.currentLang() === 'fr' ? 'fr-FR' : 'en-US';
+    const currentLang = this.translateService.currentLang || 'en';
+    const locale = currentLang === 'fr' ? 'fr-FR' : 'en-US';
     return date.toLocaleString(locale);
-  }
-
-  /**
-   * Changes application language and saves it in local storage.
-   */
-  switchLanguage(lang: string): void {
-    console.log(lang)
-    this.translateService.use(lang);
-    this.currentLang.set(lang);
-    localStorage.setItem('userLanguage', lang);
   }
 }
