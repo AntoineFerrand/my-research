@@ -265,9 +265,6 @@ Cache-Control: private, max-age=300, must-revalidate
 - 2nd search (same filters): Application cache (73ms)
 - 3rd search (same filters): Browser cache (4ms network)
 
-![alt text](cache%20performance%20screen.png)
-
-
 ## 🔌 Backend API
 
 ### Main endpoint
@@ -310,6 +307,7 @@ cd backend
 
 Included tests:
 - `BackendApplicationTests`: Spring context
+- `IncidentControllerTest`: Test Controller with MockMVC
 - API integration tests with embedded H2 database
 
 
