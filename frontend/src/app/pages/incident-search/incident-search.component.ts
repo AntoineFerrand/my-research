@@ -74,10 +74,10 @@ export class IncidentSearchComponent {
       error: (error) => {
         const endTime = performance.now();
         this.lastQueryTime.set((endTime - startTime) / 1000);
-        this.errorMessage.set(`Erreur lors de la recherche: ${error.message}`);
+        this.errorMessage.set(`Error during search: ${error.message}`);
         this.incidents.set([]);
         this.isLoading.set(false);
-        console.error('Erreur lors de la recherche d\'incidents:', error);
+        console.error('Error while searching for incidents:', error);
       }
     });
   }

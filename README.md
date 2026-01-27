@@ -1,29 +1,29 @@
 # Incident Search Application
 
-Fullstack application to search and filter incidents in a PostgreSQL database containing 100,000 entries. Built with Spring Boot (backend) and Angular 21 (frontend).
+Fullstack application to search and filter incidents in a PostgreSQL database containing 100,000 entries. 
+Built with Spring Boot 4 (backend) and Angular 21 (frontend).
 
-## 📋 Architecture
+## Architecture
 
 ```
 my-research/
-├── backend/              # Spring Boot REST API
-├── frontend/             # Angular 21 Application
-├── scripts-sql/          # Database initialization scripts
-│   ├── 01-ddl.sql       # Table schema + indexes
-│   ├── 02-data.sql      # Test data (100,000 incidents)
+├── backend/                     # Spring Boot 4 REST API
+├── frontend/                    # Angular 21 Application
+├── scripts-sql/                 # Database initialization scripts
+│   ├── 01-ddl.sql               # Table schema + indexes
+│   ├── 02-data.sql              # Test data (100,000 incidents)
 │   └── 03-performance-test.sql  # Performance benchmarking queries
-├── test-perf.sh          # Automated performance test script
-├── compose.yaml          # Docker Compose configuration
-└── README.md            # This file
+├── compose.yaml                 # Docker Compose configuration
+├── PERFORMANCE_RESULT.yaml      # performance after adding index (without cache)
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Prerequisites
 
 - **Docker & Docker Compose**: for PostgreSQL database
 - **Java 17+** & **Maven**: for Spring Boot backend
-- **Node.js 18.19+** & **npm**: for Angular frontend
+- **Node.js 18.19+** & **npm**: for Angular 21 frontend
 
 ### 2. Launch the complete environment
 
@@ -69,21 +69,7 @@ npm start
 
 Frontend will be available at `http://localhost:4200`
 
-### 3. Use the application
-
-1. Open browser at `http://localhost:4200`
-2. Use search filters:
-   - **Title**: partial search in incident title
-   - **Description**: partial search in description
-   - **Severity**: LOW, MEDIUM or HIGH
-   - **Owner**: search in last name, first name or email
-3. Click **Search**
-4. Observe:
-   - Query execution time (in seconds)
-   - Number of results found
-   - Table with incident details
-
-## 🛠️ Useful Commands
+## Useful Commands
 
 ### Database
 
@@ -105,7 +91,6 @@ docker compose exec database psql -U user -d incidents -c "SELECT COUNT(*) FROM 
 ### Backend
 
 ```bash
-cd backend
 
 # Compile without running
 ./mvnw clean package
@@ -113,15 +98,10 @@ cd backend
 # Run tests
 ./mvnw test
 
-# Create executable JAR
-./mvnw clean package -DskipTests
-java -jar target/*.jar
-```
 
 ### Frontend
 
 ```bash
-cd frontend
 
 # Install dependencies
 npm install
@@ -129,14 +109,9 @@ npm install
 # Run in development mode
 npm start
 
-# Build for production
-npm run build
-
-# Lint code
-npm run lint
 ```
 
-## 📊 Database Structure
+## Database Structure
 
 ### Table `person`
 | Column       | Type    | Description                    |
@@ -156,7 +131,7 @@ npm run lint
 | owner_id     | INTEGER   | Foreign key to `person(id)`       |
 | created_at   | TIMESTAMP | Creation date                     |
 
-## ⚡ Performance Optimizations
+## Performance Optimizations
 
 This section documents each optimization applied to improve search performance on 100,000 incidents.
 
@@ -200,17 +175,17 @@ List<Incident> findAll(Specification<Incident> spec);
 
 #### A) Application cache with Spring Cache + Caffeine
 
-**Dependencies** (`pom.xml`):
-```xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-cache</artifactId>
-</dependency>
-<dependency>
-    <groupId>com.github.ben-manes.caffeine</groupId>
-    <artifactId>caffeine</artifactId>
-</dependency>
-```
+**Explanation**:
+
+I use spring-boot-starter-cache with Caffeine as the provider. This gives me the Spring Cache abstraction, which allows me to:
+1. Decouple the business logic from the cache provider
+2. Easily migrate to Redis if we scale horizontally
+3. Benefit from Spring Boot auto-configuration
+4. Follow Spring best practices
+
+For this single-instance application, Caffeine is optimal (performance). If we were to deploy in a cluster (Kubernetes, multiple pods), 
+we would migrate to Redis by simply changing spring.cache.type=redis without modifying the code.
+
 
 **Configuration** (`application.properties`):
 ```properties
@@ -234,22 +209,13 @@ public PageResponseDTO<IncidentDTO> searchIncidents(...) {
 }
 ```
 
-- Cache key combines all search parameters to ensure uniqueness
-- TTL: 5 minutes, max 1000 entries
-- High-performance in-memory cache using Caffeine (Java)
-
 #### B) HTTP cache with standard headers
 
 **Implementation** (`IncidentController.java`):
-```java
-CacheControl cacheControl = CacheControl.maxAge(5, TimeUnit.MINUTES)
-        .cachePrivate()
-        .mustRevalidate();
 
-return ResponseEntity.ok()
-        .cacheControl(cacheControl)
-        .body(incidents);
-```
+CacheControl configured for 5minutes.
+Very useful with "sort" feature for incident listing in front,
+because the sort is instantaneous since the returned lines are the same
 
 This generates the HTTP header:
 ```
@@ -265,120 +231,51 @@ Cache-Control: private, max-age=300, must-revalidate
 - 2nd search (same filters): Application cache (73ms)
 - 3rd search (same filters): Browser cache (4ms network)
 
-## 🔌 Backend API
+### Optimization #4: Swagger
+
+**Objective**:
+See and test the API very easily
+Add documentation to the endpoints
+
+**Implementation**
+
+Add springdoc-openapi-starter-webmvc-ui depedency to pom.xml
+Swagger UI : http://localhost:8080/swagger-ui/index.html
+
+## Backend API
 
 ### Main endpoint
 
 **GET** `/incidents`
-
-**Query Parameters** (all optional):
 - `title`: LIKE filter on title
 - `description`: LIKE filter on description
 - `severity`: exact filter on severity
 - `owner`: LIKE filter on lastName, firstName OR email of owner
 
-**Example queries**:
-
-```bash
-# All incidents
-curl "http://localhost:8080/incidents"
-
-# HIGH severity incidents
-curl "http://localhost:8080/incidents?severity=HIGH"
-
-# Incidents containing "error" in title
-curl "http://localhost:8080/incidents?title=error"
-
-# Incidents for owner "Smith"
-curl "http://localhost:8080/incidents?owner=Smith"
-
-# Combined filters
-curl "http://localhost:8080/incidents?severity=HIGH&owner=john"
-```
-
-## 🧪 Tests
+## Tests
 
 ### Backend (JUnit)
 
 ```bash
-cd backend
 ./mvnw test
 ```
 
 Included tests:
 - `BackendApplicationTests`: Spring context
 - `IncidentControllerTest`: Test Controller with MockMVC
-- API integration tests with embedded H2 database
 
-
-## 🐛 Troubleshooting
-
-### Database won't start
-
-```bash
-# Check logs
-docker compose logs database
-
-# If port 5432 already in use, modify in compose.yaml
-ports:
-  - "5433:5432"
-```
-
-### Backend can't connect to database
-
-Check `backend/src/main/resources/application.properties`:
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/${POSTGRES_DB:incidents}
-spring.datasource.username=${POSTGRES_USER:user}
-spring.datasource.password=${POSTGRES_PASSWORD:password}
-```
-
-### Frontend doesn't display data
-
-1. Verify backend is accessible:
-   ```bash
-   curl http://localhost:8080/incidents
-   ```
-
-2. Check configuration in `frontend/src/assets/config.js`:
-   ```javascript
-   window.dynamicConf = {
-     BACKEND_URL: 'http://localhost:8080',
-     // ...
-   };
-   ```
-
-3. Check browser console (F12) for CORS errors
-
-
-## 📝 Code Standards
-
-### Backend (Java/Spring Boot)
-- Clean Architecture (Controller → Service → Repository)
-- DTOs for API responses
-- JPA Specifications for dynamic filters
-- Global exception handling
-
-### Frontend (Angular 21)
-- Standalone components architecture
-- Injectable services for business logic
-- TypeScript models for typing
-- SCSS for styling
-
-
-## 📚 Technologies Used
+## Technologies Used
 
 **Backend**:
-- Spring Boot 3.x
-- Spring Data JPA
-- PostgreSQL 17
+- Spring Boot 4
+- Spring Data JPA with Hibernate
+- Swagger
 - Maven
 
 **Frontend**:
 - Angular 21
 - TypeScript 5.7
 - RxJS 7.8
-- @michelin/theme 9.5.1
 
 **Infrastructure**:
 - Docker & Docker Compose
