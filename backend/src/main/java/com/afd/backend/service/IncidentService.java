@@ -6,6 +6,7 @@ import com.afd.backend.entity.Incident;
 import com.afd.backend.repository.IncidentRepository;
 import com.afd.backend.specification.IncidentSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ public class IncidentService {
 
     private final IncidentRepository incidentRepository;
 
+    @Cacheable(value = "incidents", key = "#title + '_' + #description + '_' + #severity + '_' + #owner + '_' + #page + '_' + #size")
     @Transactional(readOnly = true)
     public PageResponseDTO<IncidentDTO> searchIncidents(String title, String description, String severity, String owner, int page, int size) {
         Specification<Incident> spec = IncidentSpecification.withFilters(title, description, severity, owner);

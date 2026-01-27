@@ -192,6 +192,81 @@ A single query to retrieve all 100 incidents AND their owners
 @EntityGraph(attributePaths = {"owner"})
 List<Incident> findAll(Specification<Incident> spec);
 
+### Optimization #3: Multi-level Caching (Application + HTTP)
+
+**Objective**: Reduce database load and network latency for repeated identical searches
+
+**Implementation**:
+
+#### A) Application cache with Spring Cache + Caffeine
+
+**Dependencies** (`pom.xml`):
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-cache</artifactId>
+</dependency>
+<dependency>
+    <groupId>com.github.ben-manes.caffeine</groupId>
+    <artifactId>caffeine</artifactId>
+</dependency>
+```
+
+**Configuration** (`application.properties`):
+```properties
+spring.cache.type=caffeine
+spring.cache.cache-names=incidents
+spring.cache.caffeine.spec=maximumSize=1000,expireAfterWrite=300s
+```
+
+**Activation** (`BackendApplication.java`):
+```java
+@SpringBootApplication
+@EnableCaching
+public class BackendApplication { ... }
+```
+
+**Usage** (`IncidentService.java`):
+```java
+@Cacheable(value = "incidents", key = "#title + '_' + #description + '_' + #severity + '_' + #owner + '_' + #page + '_' + #size")
+public PageResponseDTO<IncidentDTO> searchIncidents(...) {
+    // Database query only executed on cache miss
+}
+```
+
+- Cache key combines all search parameters to ensure uniqueness
+- TTL: 5 minutes, max 1000 entries
+- High-performance in-memory cache using Caffeine (Java)
+
+#### B) HTTP cache with standard headers
+
+**Implementation** (`IncidentController.java`):
+```java
+CacheControl cacheControl = CacheControl.maxAge(5, TimeUnit.MINUTES)
+        .cachePrivate()
+        .mustRevalidate();
+
+return ResponseEntity.ok()
+        .cacheControl(cacheControl)
+        .body(incidents);
+```
+
+This generates the HTTP header:
+```
+Cache-Control: private, max-age=300, must-revalidate
+```
+
+- `private`: cache is specific to the browser (not shared in proxies)
+- `max-age=300`: valid for 5 minutes
+- `must-revalidate`: browser must check with server after expiration
+
+**Benefits**:
+- 1st search: Database query (786ms)
+- 2nd search (same filters): Application cache (73ms)
+- 3rd search (same filters): Browser cache (4ms network)
+
+![alt text](cache%20performance%20screen.png)
+
 
 ## 🔌 Backend API
 

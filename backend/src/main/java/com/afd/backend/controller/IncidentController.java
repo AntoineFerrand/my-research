@@ -4,8 +4,11 @@ import com.afd.backend.dto.IncidentDTO;
 import com.afd.backend.dto.PageResponseDTO;
 import com.afd.backend.service.IncidentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/incidents")
@@ -25,6 +28,14 @@ public class IncidentController {
             @RequestParam(required = false, defaultValue = "10") int size
     ) {
         PageResponseDTO<IncidentDTO> incidents = incidentService.searchIncidents(title, description, severity, owner, page, size);
-        return ResponseEntity.ok(incidents);
+        
+        // HTTP Cache browser side : 5 minutes, private (not shared between users)
+        CacheControl cacheControl = CacheControl.maxAge(5, TimeUnit.MINUTES)
+                .cachePrivate()
+                .mustRevalidate();
+        
+        return ResponseEntity.ok()
+                .cacheControl(cacheControl)
+                .body(incidents);
     }
 }
