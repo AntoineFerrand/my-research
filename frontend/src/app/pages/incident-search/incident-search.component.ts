@@ -6,9 +6,9 @@ import { IncidentDTO, IncidentSearchFilters, PageResponse } from '../../shared/m
 import { IncidentService } from '../../shared/services/incident.service';
 
 /**
- * Composant de recherche d'incidents.
- * Permet de filtrer les incidents par title, description, severity et owner.
- * Affiche les résultats dans un tableau avec mesure du temps de requête.
+ * Incident search component.
+ * Allows filtering incidents by title, description, severity and owner.
+ * Displays results in a table with query time measurement.
  */
 @Component({
   selector: 'app-incident-search',
@@ -18,14 +18,12 @@ import { IncidentService } from '../../shared/services/incident.service';
   styleUrls: ['./incident-search.component.scss']
 })
 export class IncidentSearchComponent {
-  // Injection de service avec inject()
   private readonly incidentService = inject(IncidentService);
   private readonly translateService = inject(TranslateService);
 
-  // Langue courante - charger depuis localStorage
+  // Current language - loaded from localStorage
   readonly currentLang = signal<string>(this.getStoredLanguage());
 
-  // Filtres de recherche avec signals
   readonly filters = signal<IncidentSearchFilters>({
     title: '',
     description: '',
@@ -35,10 +33,9 @@ export class IncidentSearchComponent {
     size: 10
   });
 
-  // Résultats de la recherche
   readonly incidents = signal<IncidentDTO[]>([]);
 
-  // Métadonnées de pagination
+  // Pagination
   readonly totalElements = signal<number>(0);
   readonly totalPages = signal<number>(0);
   readonly currentPage = signal<number>(0);
@@ -46,18 +43,16 @@ export class IncidentSearchComponent {
   readonly hasNext = signal<boolean>(false);
   readonly hasPrevious = signal<boolean>(false);
 
-  // État de chargement
   readonly isLoading = signal(false);
 
-  // Temps de la dernière requête (en secondes)
+  // Last query time (in seconds)
   readonly lastQueryTime = signal<number | null>(null);
 
-  // Message d'erreur
   readonly errorMessage = signal<string | null>(null);
 
   /**
-   * Lance la recherche d'incidents avec les filtres actuels.
-   * Mesure le temps d'exécution de la requête côté frontend.
+   * Launches incident search with current filters.
+   * Measures query execution time on frontend side.
    */
   searchIncidents(): void {
     this.isLoading.set(true);
@@ -67,7 +62,7 @@ export class IncidentSearchComponent {
     this.incidentService.searchIncidents(this.filters()).subscribe({
       next: (response: PageResponse<IncidentDTO>) => {
         const endTime = performance.now();
-        this.lastQueryTime.set((endTime - startTime) / 1000); // Convertir en secondes
+        this.lastQueryTime.set((endTime - startTime) / 1000);
         this.incidents.set(response.items);
         this.totalElements.set(response.totalElements);
         this.totalPages.set(response.totalPages);
@@ -89,7 +84,7 @@ export class IncidentSearchComponent {
   }
 
   /**
-   * Réinitialise tous les filtres et les résultats.
+   * Resets all filters and results.
    */
   resetFilters(): void {
     this.filters.set({
@@ -108,41 +103,26 @@ export class IncidentSearchComponent {
     this.errorMessage.set(null);
   }
 
-  /**
-   * Met à jour un filtre spécifique.
-   */
   updateFilter(key: keyof IncidentSearchFilters, value: string | number): void {
     this.filters.update(current => ({ ...current, [key]: value }));
   }
 
-  /**
-   * Change la page courante.
-   */
   changePage(page: number): void {
     this.filters.update(current => ({ ...current, page }));
     this.searchIncidents();
   }
 
-  /**
-   * Change la taille de page.
-   */
   changePageSize(size: number): void {
     this.filters.update(current => ({ ...current, size, page: 0 }));
     this.searchIncidents();
   }
 
-  /**
-   * Page suivante.
-   */
   nextPage(): void {
     if (this.hasNext()) {
       this.changePage(this.currentPage() + 1);
     }
   }
 
-  /**
-   * Page précédente.
-   */
   previousPage(): void {
     if (this.hasPrevious()) {
       this.changePage(this.currentPage() - 1);
@@ -150,7 +130,7 @@ export class IncidentSearchComponent {
   }
 
   /**
-   * Récupère la langue stockée ou la langue par défaut.
+   * Retrieves stored language or default language.
    */
   private getStoredLanguage(): string {
     const stored = localStorage.getItem('userLanguage');
@@ -162,7 +142,7 @@ export class IncidentSearchComponent {
   }
 
   /**
-   * Formate la date selon la langue courante.
+   * Formats date according to current language.
    */
   formatDate(dateString: string): string {
     const date = new Date(dateString);
@@ -171,7 +151,7 @@ export class IncidentSearchComponent {
   }
 
   /**
-   * Change la langue de l'application et la sauvegarde.
+   * Changes application language and saves it in local storage.
    */
   switchLanguage(lang: string): void {
     console.log(lang)

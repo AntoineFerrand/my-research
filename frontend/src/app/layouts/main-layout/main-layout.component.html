@@ -1,24 +1,22 @@
 <div class="layout-container">
-  <!-- Header -->
+
   <header class="app-header">
-    <h1 class="app-title">Application de Recherche d'Incidents</h1>
+    <h1 class="app-title">{{ 'LAYOUT.APP_TITLE' | translate }}</h1>
   </header>
 
   <div class="layout-body">
-    <!-- Contenu principal -->
     <main class="main-content">
       <router-outlet></router-outlet>
     </main>
   </div>
 
-  <!-- Footer -->
   <footer class="app-footer">
     <div class="footer-content">
-      <span>© {{ currentYear }} Michelin. Tous droits réservés.</span>
+      <span>© {{ currentYear }} {{ 'LAYOUT.APP_TITLE' | translate }}. {{ 'LAYOUT.COPYRIGHT' | translate }}</span>
       <span class="footer-separator">|</span>
-      <a href="#" class="footer-link">Mentions légales</a>
+      <a href="#" class="footer-link">{{ 'LAYOUT.LEGAL_NOTICE' | translate }}</a>
       <span class="footer-separator">|</span>
-      <a href="#" class="footer-link">Confidentialité</a>
+      <a href="#" class="footer-link">{{ 'LAYOUT.PRIVACY' | translate }}</a>
     </div>
   </footer>
 </div>

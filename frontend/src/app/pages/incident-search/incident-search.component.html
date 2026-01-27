@@ -1,6 +1,5 @@
 <div class="incident-search-container">
 
-  <!-- Sélecteur de langue -->
   <div class="language-selector">
     <label>{{ 'LANGUAGE.SELECT' | translate }}:</label>
     <button
@@ -17,10 +16,8 @@
     </button>
   </div>
 
-  <!-- Titre -->
   <h1>{{ 'INCIDENT.TITLE' | translate }}</h1>
 
-  <!-- Formulaire de recherche -->
   <div class="search-form">
     <div class="form-grid">
       <div class="form-field">
@@ -86,7 +83,6 @@
     </div>
   </div>
 
-  <!-- Temps de requête -->
   @if (lastQueryTime() !== null) {
     <div class="query-info">
       <span class="query-time">
@@ -100,14 +96,12 @@
     </div>
   }
 
-  <!-- Message d'erreur -->
   @if (errorMessage()) {
     <div class="error-message">
       {{ 'INCIDENT.ERROR' | translate: {message: errorMessage()} }}
     </div>
   }
 
-  <!-- Tableau des résultats -->
   @if (incidents().length > 0) {
     <div class="results-container">
       <div class="table-wrapper">
@@ -147,7 +141,6 @@
         </table>
       </div>
 
-      <!-- Pagination -->
       <div class="pagination-controls">
         <div class="pagination-info">
           {{ 'INCIDENT.PAGINATION.PAGE_INFO' | translate: {current: currentPage() + 1, total: totalPages()} }} ({{ totalElements() }} {{ 'INCIDENT.RESULT_COUNT' | translate: {count: ''} }})
@@ -181,7 +174,6 @@
     </div>
   }
 
-  <!-- Message si aucun résultat -->
   @if (!isLoading() && incidents().length === 0 && lastQueryTime() !== null && !errorMessage()) {
     <div class="no-results">
       {{ 'INCIDENT.NO_RESULTS' | translate }}

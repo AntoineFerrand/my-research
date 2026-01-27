@@ -36,5 +36,11 @@
   },
   "LANGUAGE": {
     "SELECT": "Langue"
+  },
+  "LAYOUT": {
+    "APP_TITLE": "Recherche d'incidents",
+    "COPYRIGHT": "Tous droits réservés.",
+    "LEGAL_NOTICE": "Mentions légales",
+    "PRIVACY": "Confidentialité"
   }
 }

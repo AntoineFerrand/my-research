@@ -1,17 +1,19 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 /**
- * Layout principal avec header, sidebar et footer.
- * Style inspiré du design system Michelin.
+ * Principal layout component.
+ * Contains header, footer and router outlet.
  */
 @Component({
   selector: 'app-main-layout',
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+    TranslateModule
   ],
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.scss']
