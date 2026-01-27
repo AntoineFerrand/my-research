@@ -181,7 +181,7 @@
             (change)="changePageSize(+$any($event.target).value)"
             [disabled]="isLoading()">
             <option [value]="5">5 par page</option>
-            <option [value]="10">10 par page</option>
+            <option [defaultSelected]="10" [value]="10">10 par page</option>
             <option [value]="25">25 par page</option>
             <option [value]="50">50 par page</option>
             <option [value]="100">100 par page</option>

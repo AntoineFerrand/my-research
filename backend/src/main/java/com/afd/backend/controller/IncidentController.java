@@ -3,6 +3,7 @@ package com.afd.backend.controller;
 import com.afd.backend.dto.IncidentDTO;
 import com.afd.backend.dto.PageResponseDTO;
 import com.afd.backend.service.IncidentService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class IncidentController {
     private final IncidentService incidentService;
 
     @GetMapping
-    public ResponseEntity<PageResponseDTO<IncidentDTO>> searchIncidents(
+    public ResponseEntity<@NonNull PageResponseDTO<IncidentDTO>> searchIncidents(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String description,
             @RequestParam(required = false) String severity,

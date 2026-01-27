@@ -4,7 +4,6 @@ import com.afd.backend.entity.Incident;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Data
@@ -31,14 +30,12 @@ public class IncidentDTO {
         dto.setDescription(incident.getDescription());
         dto.setSeverity(incident.getSeverity());
         dto.setCreatedAt(incident.getCreatedAt());
-        
-        if (incident.getOwner() != null) {
-            dto.setOwnerId(incident.getOwner().getId());
-            dto.setOwnerLastName(incident.getOwner().getLastName());
-            dto.setOwnerFirstName(incident.getOwner().getFirstName());
-            dto.setOwnerEmail(incident.getOwner().getEmail());
-        }
-        
+
+        dto.setOwnerId(incident.getOwner().getId());
+        dto.setOwnerLastName(incident.getOwner().getLastName());
+        dto.setOwnerFirstName(incident.getOwner().getFirstName());
+        dto.setOwnerEmail(incident.getOwner().getEmail());
+
         return dto;
     }
 }

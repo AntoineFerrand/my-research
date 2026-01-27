@@ -5,6 +5,7 @@ import com.afd.backend.dto.PageResponseDTO;
 import com.afd.backend.entity.Incident;
 import com.afd.backend.repository.IncidentRepository;
 import com.afd.backend.specification.IncidentSpecification;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -24,15 +25,15 @@ public class IncidentService {
     @Cacheable(value = "incidents", key = "#title + '_' + #description + '_' + #severity + '_' + #owner + '_' + #page + '_' + #size + '_' + #sort + '_' + #direction")
     @Transactional(readOnly = true)
     public PageResponseDTO<IncidentDTO> searchIncidents(String title, String description, String severity, String owner, int page, int size, String sort, String direction) {
-        Specification<Incident> spec = IncidentSpecification.withFilters(title, description, severity, owner);
+        Specification<@NonNull Incident> spec = IncidentSpecification.withFilters(title, description, severity, owner);
 
         String sortField = mapSortField(sort);
         Sort.Direction sortDirection = "asc".equalsIgnoreCase(direction) ? Sort.Direction.ASC : Sort.Direction.DESC;
         
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortField));
-        Page<Incident> incidentsPage = incidentRepository.findAll(spec, pageable);
+        Page<@NonNull Incident> incidentsPage = incidentRepository.findAll(spec, pageable);
 
-        Page<IncidentDTO> incidentDTOPage = incidentsPage.map(IncidentDTO::fromEntity);
+        Page<@NonNull IncidentDTO> incidentDTOPage = incidentsPage.map(IncidentDTO::fromEntity);
         return PageResponseDTO.fromPage(incidentDTOPage);
     }
     
