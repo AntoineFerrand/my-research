@@ -27,7 +27,9 @@ export class IncidentSearchComponent {
     severity: '',
     owner: '',
     page: 0,
-    size: 10
+    size: 10,
+    sort: 'createdAt',
+    direction: 'desc'
   });
 
   readonly incidents = signal<IncidentDTO[]>([]);
@@ -90,7 +92,9 @@ export class IncidentSearchComponent {
       severity: '',
       owner: '',
       page: 0,
-      size: 10
+      size: 10,
+      sort: 'createdAt',
+      direction: 'desc'
     });
     this.incidents.set([]);
     this.totalElements.set(0);
@@ -127,11 +131,42 @@ export class IncidentSearchComponent {
   }
 
   /**
+   * Changes the sort field and direction.
+   * If the same field is clicked, toggles the direction.
+   */
+  changeSort(field: string): void {
+    this.filters.update(current => {
+      if (current.sort === field) {
+        // Toggle direction if same field
+        return { ...current, direction: current.direction === 'asc' ? 'desc' : 'asc', page: 0 };
+      } else {
+        // New field, default to ascending
+        return { ...current, sort: field, direction: 'asc', page: 0 };
+      }
+    });
+    this.searchIncidents();
+  }
+
+  /**
+   * Checks if a column is currently sorted.
+   */
+  isSorted(field: string): boolean {
+    return this.filters().sort === field;
+  }
+
+  /**
+   * Gets the sort direction for a column.
+   */
+  getSortDirection(field: string): 'asc' | 'desc' | null {
+    return this.isSorted(field) ? this.filters().direction! : null;
+  }
+
+  /**
    * Formats date according to current language.
    */
   formatDate(dateString: string): string {
     const date = new Date(dateString);
-    const currentLang = this.translateService.currentLang || 'en';
+    const currentLang = this.translateService.getCurrentLang() || 'en';
     const locale = currentLang === 'fr' ? 'fr-FR' : 'en-US';
     return date.toLocaleString(locale);
   }

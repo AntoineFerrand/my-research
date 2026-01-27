@@ -26,6 +26,8 @@ export class IncidentService {
     if (filters.owner?.trim())       params = params.set('owner', filters.owner.trim());
     if (filters.page !== undefined)  params = params.set('page', filters.page.toString());
     if (filters.size !== undefined)  params = params.set('size', filters.size.toString());
+    if (filters.sort)                params = params.set('sort', filters.sort);
+    if (filters.direction)           params = params.set('direction', filters.direction);
 
     return this.http.get<PageResponse<IncidentDTO>>(this.apiUrl, {params});
   }

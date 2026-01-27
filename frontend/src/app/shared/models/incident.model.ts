@@ -22,6 +22,8 @@ export interface IncidentSearchFilters {
   owner?: string;
   page?: number;
   size?: number;
+  sort?: string;
+  direction?: 'asc' | 'desc';
 }
 
 export interface PageResponse<T> {

@@ -160,6 +160,24 @@ h1 {
         font-size: 0.9rem;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        
+        &.sortable {
+          cursor: pointer;
+          user-select: none;
+          transition: background-color 0.2s;
+          position: relative;
+          
+          &:hover {
+            background-color: #495057;
+          }
+          
+          .sort-indicator {
+            margin-left: 0.5rem;
+            font-size: 0.8rem;
+            display: inline-block;
+            color: #17a2b8;
+          }
+        }
       }
     }
 

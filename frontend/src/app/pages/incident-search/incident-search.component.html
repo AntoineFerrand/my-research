@@ -91,14 +91,54 @@
         <table class="incidents-table">
           <thead>
           <tr>
-            <th>{{ 'INCIDENT.TABLE.ID' | translate }}</th>
-            <th>{{ 'INCIDENT.TABLE.TITLE' | translate }}</th>
-            <th>{{ 'INCIDENT.TABLE.DESCRIPTION' | translate }}</th>
-            <th>{{ 'INCIDENT.TABLE.SEVERITY' | translate }}</th>
-            <th>{{ 'INCIDENT.TABLE.CREATED_AT' | translate }}</th>
-            <th>{{ 'INCIDENT.TABLE.OWNER_LASTNAME' | translate }}</th>
-            <th>{{ 'INCIDENT.TABLE.OWNER_FIRSTNAME' | translate }}</th>
-            <th>{{ 'INCIDENT.TABLE.OWNER_EMAIL' | translate }}</th>
+            <th class="sortable" (click)="changeSort('id')">
+              {{ 'INCIDENT.TABLE.ID' | translate }}
+              @if (isSorted('id')) {
+                <span class="sort-indicator">{{ getSortDirection('id') === 'asc' ? '▲' : '▼' }}</span>
+              }
+            </th>
+            <th class="sortable" (click)="changeSort('title')">
+              {{ 'INCIDENT.TABLE.TITLE' | translate }}
+              @if (isSorted('title')) {
+                <span class="sort-indicator">{{ getSortDirection('title') === 'asc' ? '▲' : '▼' }}</span>
+              }
+            </th>
+            <th class="sortable" (click)="changeSort('description')">
+              {{ 'INCIDENT.TABLE.DESCRIPTION' | translate }}
+              @if (isSorted('description')) {
+                <span class="sort-indicator">{{ getSortDirection('description') === 'asc' ? '▲' : '▼' }}</span>
+              }
+            </th>
+            <th class="sortable" (click)="changeSort('severity')">
+              {{ 'INCIDENT.TABLE.SEVERITY' | translate }}
+              @if (isSorted('severity')) {
+                <span class="sort-indicator">{{ getSortDirection('severity') === 'asc' ? '▲' : '▼' }}</span>
+              }
+            </th>
+            <th class="sortable" (click)="changeSort('createdAt')">
+              {{ 'INCIDENT.TABLE.CREATED_AT' | translate }}
+              @if (isSorted('createdAt')) {
+                <span class="sort-indicator">{{ getSortDirection('createdAt') === 'asc' ? '▲' : '▼' }}</span>
+              }
+            </th>
+            <th class="sortable" (click)="changeSort('ownerLastName')">
+              {{ 'INCIDENT.TABLE.OWNER_LASTNAME' | translate }}
+              @if (isSorted('ownerLastName')) {
+                <span class="sort-indicator">{{ getSortDirection('ownerLastName') === 'asc' ? '▲' : '▼' }}</span>
+              }
+            </th>
+            <th class="sortable" (click)="changeSort('ownerFirstName')">
+              {{ 'INCIDENT.TABLE.OWNER_FIRSTNAME' | translate }}
+              @if (isSorted('ownerFirstName')) {
+                <span class="sort-indicator">{{ getSortDirection('ownerFirstName') === 'asc' ? '▲' : '▼' }}</span>
+              }
+            </th>
+            <th class="sortable" (click)="changeSort('ownerEmail')">
+              {{ 'INCIDENT.TABLE.OWNER_EMAIL' | translate }}
+              @if (isSorted('ownerEmail')) {
+                <span class="sort-indicator">{{ getSortDirection('ownerEmail') === 'asc' ? '▲' : '▼' }}</span>
+              }
+            </th>
           </tr>
           </thead>
           <tbody>
